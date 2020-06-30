@@ -1,5 +1,16 @@
+
+body::-webkit-scrollbar {
+  display: none;
+  /* overflow-y: scroll;  */
+
+}
+
+
+
 .App {
   text-align: center;
+  height: 5000px;
+
 }
 
 .App-logo {
@@ -22,7 +33,10 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  position: fixed;
+  width: 100%;
 }
+
 
 .App-link {
   color: #61dafb;
