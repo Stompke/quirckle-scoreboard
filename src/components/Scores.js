@@ -46,8 +46,9 @@ const useStyles = makeStyles((theme) => ({
 
 const Scores = () => {
     const classes = useStyles();
+    const [testState, setTestState ] = useState([1,2,3,4])
     const [expanded, setExpanded] = React.useState(false);
-    const [input, setInput] = useState({})
+    const [input, setInput] = useState()
     // const [players, setPlayers] = useState(['shawn', 'austin', 'noah', 'raylah'])
     const [currentPlayer, setCurrentPlayer] = useState(0)
     const [currentRound, setCurrentRound] = useState(1)
@@ -57,6 +58,7 @@ const Scores = () => {
         {name: 'noah', score: []},
         {name: 'raylah', score: []}
     ])
+    const [allScores, setAllScores] = useState([])
     const reducer = (accumulator, currentValue) => ({ points: accumulator.points + currentValue.points});
 
     const handleChange = e => {
@@ -66,16 +68,21 @@ const Scores = () => {
 
     const handleSubmit = e => {
         e.preventDefault()
-        let addNewScore = scoreboard[currentPlayer].score
-        addNewScore.push({points: parseInt(input), round: currentRound, player: currentPlayer})
-        // setScoreboard(...scoreboard, scoreboard[currentPlayer].score.concat({points: parseInt(input), round: currentRound, player: currentPlayer}))
-        if (currentPlayer !== scoreboard.length-1)
-        setCurrentPlayer(currentPlayer + 1)
-        else {
-            setCurrentPlayer(0)
-            setCurrentRound(currentRound + 1)
+        if(!input){
+            alert('please enter a number')
+        } else {
+            let addNewScore = scoreboard[currentPlayer].score
+            addNewScore.push({points: parseInt(input), round: currentRound, player: currentPlayer})
+            // setScoreboard(...scoreboard, scoreboard[currentPlayer].score.concat({points: parseInt(input), round: currentRound, player: currentPlayer}))
+            if (currentPlayer !== scoreboard.length-1)
+            setCurrentPlayer(currentPlayer + 1)
+            else {
+                setCurrentPlayer(0)
+                setCurrentRound(currentRound + 1)
+            }
+            setInput('')
+            reduceAllPlayers()
         }
-        setInput('')
     }
 
     const handleExpandClick = () => {
@@ -89,30 +96,98 @@ const Scores = () => {
         }
     }
 
-    const changeScore = (player, round) => {
-        setScoreboard([
-            ...scoreboard,
-            scoreboard[player][round].score.points
-        ]) 
+    // useEffect(() => {
+        const reduceAllPlayers = () => {
+            let allScores = []
+            let name
+            let totalScore
+            if (currentRound > 1){
+                scoreboard.forEach(item =>  (
+                    totalScore = item.score.reduce(reducer),
+                    // console.log(`${item.name}: ${totalScore}`)
+                    // console.log(totalScore),
+                    // console.log(`${item.name}: ${totalScore.points}`),
+                    // allScores.push({name:item.name, score:totalScore.points})
+                    setAllScores([
+                        ...allScores,
+                        {name:item.name, score:totalScore.points}
+                    ]),
+                    console.log("set scores run"),
+                    console.log({name:item.name, score:totalScore.points})
+                ))
+
+
+            }
+
+        }
+
+    // },[handleSubmit])
+
+    const changeScore = (curPlayer, curRound) => {
+        let newValue = prompt('Enter correct Score.')
+        
+        setScoreboard(
+            scoreboard.map((player, i) => {
+                if (i == curPlayer ){
+
+                    player.score[curRound-1] = {...player.score[curRound-1], points: Number(newValue)}
+                    return player
+
+                } else {
+                    return player
+                }
+            })
+
+        ) 
+
+
     }
 
+    useEffect(() => {
+        console.log(testState)
+        const handleChangeCheckbox = id => {
+            setTestState(
+              testState.map((todo,i) => {
+                if (i === id) {
+                  return 777;
+                } else {
+                  return todo;
+                }
+              })
+            );
+          };
+    
+        handleChangeCheckbox(2)
 
+        console.log('after run: ', testState)
+    },[])
 
+    const changePlayer = (type) => {
+        if (type == 0) {
+            setCurrentPlayer(currentPlayer - 1)
+        } else {
+            setCurrentPlayer(currentPlayer + 1)
+        }
+    }
+    
     return (
         <>
+        <button onClick={() => changePlayer(0)}>back</button>
+        <button onClick={() => changePlayer(1)}>next</button>
+        {/* {reduceAllPlayers() ? 
+        reduceAllPlayers().map(item => <h4 key={item.name}>{item.name}: {item.score}</h4>)
+        : 'no'} */}
         <div>
-            <h3>hello</h3>
             <h3>Round: {currentRound}</h3>
         </div>
-        <form onSubmit={handleSubmit}>
-            <h3>{scoreboard[currentPlayer].name}</h3>
-            <input name={currentPlayer} value={input} onChange={handleChange} type="number"/>
-        </form>
 
         <Card className={classes.root}>
         <CardHeader
             title={scoreboard[currentPlayer].name}
         />
+        <form onSubmit={handleSubmit}>
+            <input name={currentPlayer} value={input} onChange={handleChange} type="number"/>
+        </form>
         <CardContent>
         Total: {reducerFunction()}
         </CardContent>
@@ -132,7 +207,8 @@ const Scores = () => {
             <CardContent>
             <Typography paragraph>Scores:</Typography>
             <Typography paragraph>
-                {scoreboard[currentPlayer].score.map(score => <p onClick={() => changeScore=(score.player, score.round)} key={`${score.player}-${score.round}`}>{score.points}</p>)}
+                {scoreboard[currentPlayer].score.map(score => <p onClick={() => changeScore(score.player, score.round)} key={`${score.player}-${score.round}`}>{score.points}</p>)}
+                {/* {scoreboard[currentPlayer].score.map(score => <p onClick={() => console.log(score.player, score.round)} key={`${score.player}-${score.round}`}>{score.points}</p>)} */}
             </Typography>
             </CardContent>
         </Collapse>
