@@ -172,6 +172,7 @@ const Scores = () => {
     
     return (
         <>
+
         <button onClick={() => changePlayer(0)}>back</button>
         <button onClick={() => changePlayer(1)}>next</button>
         {/* {reduceAllPlayers() ? 
