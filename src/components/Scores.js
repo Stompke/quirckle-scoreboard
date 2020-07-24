@@ -170,9 +170,17 @@ const Scores = () => {
 
     const changePlayer = (type) => {
         if (type == 0) {
-            setCurrentPlayer(currentPlayer - 1)
+            if (currentPlayer == 0){
+                setCurrentPlayer(scoreboard.length-1)
+            } else {
+                setCurrentPlayer(currentPlayer - 1)
+            }
         } else {
-            setCurrentPlayer(currentPlayer + 1)
+            if (currentPlayer == scoreboard.length-1){
+                setCurrentPlayer(0)
+            } else {
+                setCurrentPlayer(currentPlayer + 1)
+            }
         }
     }
     
