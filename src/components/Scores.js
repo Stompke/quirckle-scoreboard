@@ -57,6 +57,10 @@ const Scores = () => {
         {name: 'austin', score: []},
         {name: 'noah', score: []},
         {name: 'raylah', score: []}
+        // {name: 'shawn', score: [{points:0,round:0,player:0}]},
+        // {name: 'austin', score: [{points:0,round:0,player:1}]},
+        // {name: 'noah', score: [{points:0,round:0,player:2}]},
+        // {name: 'raylah', score: [{points:0,round:0,player:3}]}
     ])
     const [allScores, setAllScores] = useState([])
     const reducer = (accumulator, currentValue) => ({ points: accumulator.points + currentValue.points});
@@ -111,9 +115,9 @@ const Scores = () => {
                     setAllScores([
                         ...allScores,
                         {name:item.name, score:totalScore.points}
-                    ]),
-                    console.log("set scores run"),
-                    console.log({name:item.name, score:totalScore.points})
+                    ])
+                    // console.log("set scores run"),
+                    // console.log({name:item.name, score:totalScore.points})
                 ))
 
 
@@ -125,20 +129,22 @@ const Scores = () => {
 
     const changeScore = (curPlayer, curRound) => {
         let newValue = prompt('Enter correct Score.')
-        
-        setScoreboard(
-            scoreboard.map((player, i) => {
-                if (i == curPlayer ){
-
-                    player.score[curRound-1] = {...player.score[curRound-1], points: Number(newValue)}
-                    return player
-
-                } else {
-                    return player
-                }
-            })
-
-        ) 
+        console.log(newValue)
+        if (newValue !='') {
+            setScoreboard(
+                scoreboard.map((player, i) => {
+                    if (i == curPlayer ){
+    
+                        player.score[curRound-1] = {...player.score[curRound-1], points: Number(newValue)}
+                        return player
+    
+                    } else {
+                        return player
+                    }
+                })
+    
+            ) 
+        }
 
 
     }
@@ -178,6 +184,15 @@ const Scores = () => {
         {/* {reduceAllPlayers() ? 
         reduceAllPlayers().map(item => <h4 key={item.name}>{item.name}: {item.score}</h4>)
         : 'no'} */}
+        
+        {scoreboard.map(item => {
+            if(item.score[0]){
+                return <h3>{item.name}: {item.score.reduce((a, b) => ({points: a.points + b.points})).points}</h3>
+            } else {
+                return <h3>{item.name}: 0</h3>
+            }
+        }
+        )}
         <div>
             <h3>Round: {currentRound}</h3>
         </div>
